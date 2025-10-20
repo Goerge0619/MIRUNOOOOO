@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>La mulți ani, Mriuna! 🎉</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&family=Pacifico&display=swap" rel="stylesheet">
+
+  <style>
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:'Montserrat',system-ui,Arial,sans-serif;background:linear-gradient(135deg,var(--pink-1),var(--pink-2));color:#330014}
+    .page{
+    min-height:100vh;display:flex;align-items:center;justify-content:center;padding:32px;position:relative;overflow:hidden
+    }
+    .card{
+    background:linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,240,250,0.8));
+    border-radius:24px;padding:36px;max-width:980px;width:100%;box-shadow:0 12px 40px rgba(255,82,166,0.12);border:2px solid rgba(255,120,180,0.18);
+    display:grid;grid-template-columns:1fr 360px;gap:24px;align-items:center
+    }
+    @media (max-width:880px){.card{grid-template-columns:1fr; padding:28px}.right{order: -1}}
+
+
+    .left h1{font-family:'Pacifico',cursive;font-size:54px;margin:0 0 8px;color:var(--accent);text-shadow:0 6px 18px rgba(255,77,148,0.18)}
+    .left h2{margin:0 0 16px;font-size:20px;color:#4a0022}
+    .message{background:linear-gradient(90deg, rgba(255,255,255,0.6), rgba(255,245,250,0.6));padding:18px;border-radius:14px;border:1px dashed rgba(255,120,180,0.25);}
+    .message p{margin:0;font-size:16px;line-height:1.5}
+
+
+    .celebrate-btn{display:inline-flex;align-items:center;gap:10px;padding:12px 18px;border-radius:999px;background:linear-gradient(90deg,var(--pink-4),var(--accent));color:var(--white);font-weight:700;border:none;cursor:pointer;box-shadow:0 8px 24px rgba(255,77,148,0.18);transform:translateY(0);transition:transform .12s ease}
+    .celebrate-btn:active{transform:translateY(2px)}
+
+
+    .right{display:flex;flex-direction:column;align-items:center;gap:16px}
+    .cake{width:280px;height:220px;border-radius:18px;position:relative;display:flex;align-items:flex-end;justify-content:center;padding-bottom:18px}
+    .cake .layer{width:230px;height:60px;background:linear-gradient(180deg,#fff 0%, #ffe6f0 100%);border-radius:12px;box-shadow:inset 0 -6px 12px rgba(255,0,115,0.06);border:4px solid rgba(255,150,200,0.18)}
+    .cake .candle{position:absolute;top:10px;left:50%;transform:translateX(-50%);display:flex;gap:8px}
+    .candle .stick{width:8px;height:36px;background:linear-gradient(180deg,#fff,#ffd8ec);border-radius:4px}
+    .flame{width:14px;height:20px;border-radius:50% 50% 40% 40%;background:linear-gradient(180deg,#ffd86b,#ff7ab1);position:relative;top:-10px;filter:drop-shadow(0 6px 8px rgba(255,120,180,0.25));animation:flicker .9s infinite}
+    @keyframes flicker{0%{transform:translateY(0) scale(1)}50%{transform:translateY(-2px) scale(.95)}100%{transform:translateY(0) scale(1)}}
+
+
+    .confetti-canvas{position:absolute;inset:0;pointer-events:none}
+
+
+    .hearts{position:absolute;left:12px;bottom:12px;display:flex;gap:12px}
+    .heart{width:44px;height:44px;background:radial-gradient(circle at 30% 30%, #fff, rgba(255,255,255,0.2)),linear-gradient(180deg,#ff66b3,#ff2d9c);clip-path:polygon(50% 90%, 0 35%, 20% 10%, 50% 30%, 80% 10%, 100% 35%);opacity:.9;transform:scale(.9);animation:floatUp 6s linear infinite}
+    .heart:nth-child(2){animation-delay:1s}
+    .heart:nth-child(3){animation-delay:2.2s}
+    @keyframes floatUp{0%{transform:translateY(0) scale(.9);opacity:0.95}50%{transform:translateY(-30px) scale(1);opacity:1}100%{transform:translateY(-70px) scale(.85);opacity:0}}
+
+
+    .footer-notes{font-size:13px;color:#880033;opacity:.9;margin-top:8px}
+
+
+    /* little sparkles */
+    .sparkle{width:10px;height:10px;border-radius:50%;position:absolute;background:linear-gradient(90deg,#fff,#ffd3f0);box-shadow:0 6px 18px rgba(255,100,180,0.12);opacity:.9;transform:rotate(25deg)}
+  </style>
+
+</head>
+<body>
+  
+  <div class="page">
+    <canvas class="confetti-canvas" id="confetti"></canvas>
+
+
+    <div class="card" role="main" aria-labelledby="title">
+    <div class="left">
+    <h1 id="title">La mulți ani, Mriuna! 🎀</h1>
+    <h2>Îmi pare rău că nu ți-am zis la timp — dar uite un site roz numai pentru tine!</h2>
+
+
+    <div class="message">
+    <p>
+      <strong>Draga Mriuna,</strong>
+      <br>
+    Îți urez din suflet sănătate, voie bună și zâmbete cât cuprinde. Sper să ai parte de o zi incredibilă, plină de surprize roz, tort și prieteni buni. Iartă-mă pentru întârziere — am compensat printr-un site plin de inimioare și confetti! 💖</p>
+    </div>
+
+
+    <div style="margin-top:18px;display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+    <button class="celebrate-btn" id="celebrateBtn">Sărbătorește! 🎉</button>
+    <button class="celebrate-btn" id="toggleHearts" style="background:linear-gradient(90deg,#ff9ccf,#ff66b3);font-weight:600">Mai mult roz ✨</button>
+    </div>
+
+
+    <div class="footer-notes">Proiect personal — creat cu mult roz și voie bună.</div>
+    </div>
+
+
+    <div class="right">
+    <div class="cake" aria-hidden="true">
+    <div class="layer"></div>
+    <div class="candle">
+    <div class="stick"></div>
+    <div class="flame"></div>
+    </div>
+    </div>
+
+
+    <div style="text-align:center">
+    <strong style="font-size:20px;color:#4a0022">Cadou virtual:</strong>
+    <p style="margin:8px 0 0">Apasă <em>Sărbătorește!</em> ca să lansezi confetti și o mică melodie veselă.</p>
+    </div>
+    </div>
+    </div>
+
+
+    <div class="hearts" id="hearts">
+    <div class="heart"></div>
+    <div class="heart"></div>
+    <div class="heart"></div>
+    </div>
+
+    <div class="sparkle" style="left:8%;top:12%"></div>
+    <div class="sparkle" style="left:78%;top:8%;width:14px;height:14px"></div>
+    <div class="sparkle" style="left:46%;top:6%"></div>
+  </div>
+
+  <script>
+    this.tilt = rand(-10,10);
+    this.speed = rand(1,4);
+    this.opacity = rand(.8,1);
+    this.rotate = rand(0,360);
+
+    update()
+    this.y += this.speed;
+    this.x += Math.sin(this.y/20)*1.5;
+    this.rotate += 4;
+    if(this.y>H+20) this.y = rand(-40,-10);
+    
+    draw()
+    ctx.save();
+    ctx.translate(this.x,this.y);
+    ctx.rotate(this.rotate*Math.PI/180);
+    ctx.fillStyle = this.color;
+    ctx.globalAlpha = this.opacity;
+    ctx.fillRect(-this.size/2, -this.size/2, this.size, this.size*0.6);
+    ctx.restore();
+    
+
+    const confs = Array.from({length:120},()=>new Confetti());
+    let isRunning = false;
+    function loop(){
+    ctx.clearRect(0,0,W,H);
+
+    if(isRunning){
+    confs.forEach(c=>{c.update();c.draw()});
+    }
+    requestAnimationFrame(loop);
+    }
+    loop();
+
+    function playMelody(){
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    const ac = new AudioCtx();
+    const now = ac.currentTime;
+    const notes = [523.25, 659.25, 783.99, 523.25, 659.25]; // C5, E5, G5, C5, E5
+    notes.forEach((freq,i)=>{
+    const o = ac.createOscillator();
+    const g = ac.createGain();
+    o.type = 'sine';o.frequency.value = freq;g.gain.value = 0.001;
+    o.connect(g);g.connect(ac.destination);
+    g.gain.setValueAtTime(0.001, now + i*0.18);
+    g.gain.exponentialRampToValueAtTime(0.12, now + i*0.18 + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001, now + i*0.18 + 0.17);
+    o.start(now + i*0.18);o.stop(now + i*0.18 + 0.18);
+    });
+    // close ctx after melody
+    setTimeout(()=>{if(ac.close)ac.close()}, 1200);
+    }
+
+
+    document.getElementById('celebrateBtn').addEventListener('click', ()=>{
+    isRunning = true;playMelody();
+    // stop after a while
+    setTimeout(()=>{isRunning=false}, 8000);
+    });
+
+
+    // toggle hearts: make them bigger / more visible
+    const hearts = document.getElementById('hearts');
+    let extraPink = false;
+    document.getElementById('toggleHearts').addEventListener('click', ()=>{
+    extraPink = !extraPink;
+    if(extraPink){
+    document.documentElement.style.setProperty('--pink-1','#fff0f7');
+    document.documentElement.style.setProperty('--pink-2','#ffd6ec');
+    document.documentElement.style.setProperty('--pink-3','#ff8fcf');
+    document.documentElement.style.setProperty('--pink-4','#ff3d99');
+    hearts.style.transform = 'scale(1.1)';
+    hearts.style.filter = 'drop-shadow(0 10px 20px rgba(255,77,148,0.18))';
+    } else {
+    document.documentElement.style.setProperty('--pink-1','#ffeff6');
+    document.documentElement.style.setProperty('--pink-2','#ffd3e8');
+    document.documentElement.style.setProperty('--pink-3','#ff9ccf');
+    document.documentElement.style.setProperty('--pink-4','#ff66b3');
+    hearts.style.transform = '';
+    hearts.style.filter = '';
+    }
+    });
+
+
+    // small accessibility: focus style
+    document.querySelectorAll('button').forEach(b=>{
+    b.addEventListener('keydown', e=>{if(e.key==='Enter') b.click()});
+    });
+  </script>
+
+</body>
+</html>
