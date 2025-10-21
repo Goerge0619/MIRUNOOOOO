@@ -33,8 +33,8 @@
     .right{display:flex;flex-direction:column;align-items:center;gap:16px}
     .cake{width:280px;height:220px;border-radius:18px;position:relative;display:flex;align-items:flex-end;justify-content:center;padding-bottom:18px}
     .cake .layer{width:230px;height:60px;background:linear-gradient(180deg,#fff 0%, #ffe6f0 100%);border-radius:12px;box-shadow:inset 0 -6px 12px rgba(255,0,115,0.06);border:4px solid rgba(255,150,200,0.18)}
-    .cake .candle{position:absolute;top:10px;left:50%;transform:translateX(-50%);display:flex;gap:8px}
-    .candle .stick{width:8px;height:36px;background:linear-gradient(180deg,#fff,#ffd8ec);border-radius:4px}
+    .cake .candle{position:absolute;top:10px;left:50%;transform:translateX(-50%);display:flex;gap:8px;}
+    .candle .stick{width:8px;height:36px;background:linear-gradient(180deg,#ffe6f0, white);border-radius:4px}
     .flame{width:14px;height:20px;border-radius:50% 50% 40% 40%;background:linear-gradient(180deg,#ffd86b,#ff7ab1);position:relative;top:-10px;filter:drop-shadow(0 6px 8px rgba(255,120,180,0.25));animation:flicker .9s infinite}
     @keyframes flicker{0%{transform:translateY(0) scale(1)}50%{transform:translateY(-2px) scale(.95)}100%{transform:translateY(0) scale(1)}}
 
@@ -116,93 +116,123 @@
     <div class="sparkle" style="left:46%;top:6%"></div>
   </div>
 
+  <canvas id="canvas"></canvas>
+  <button id="celebrateBtn">Celebrate 🎉</button>
+  <button id="toggleHearts">Toggle Hearts 💖</button>
+  <div id="hearts"></div>
+
   <script>
-    this.tilt = rand(-10,10);
-    this.speed = rand(1,4);
-    this.opacity = rand(.8,1);
-    this.rotate = rand(0,360);
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    let W = window.innerWidth;
+    let H = window.innerHeight;
+    canvas.width = W;
+    canvas.height = H;
 
-    update()
-    this.y += this.speed;
-    this.x += Math.sin(this.y/20)*1.5;
-    this.rotate += 4;
-    if(this.y>H+20) this.y = rand(-40,-10);
-    
-    draw()
-    ctx.save();
-    ctx.translate(this.x,this.y);
-    ctx.rotate(this.rotate*Math.PI/180);
-    ctx.fillStyle = this.color;
-    ctx.globalAlpha = this.opacity;
-    ctx.fillRect(-this.size/2, -this.size/2, this.size, this.size*0.6);
-    ctx.restore();
-    
+    window.addEventListener('resize', ()=>{
+      W = window.innerWidth;
+      H = window.innerHeight;
+      canvas.width = W;
+      canvas.height = H;
+    });
 
-    const confs = Array.from({length:120},()=>new Confetti());
-    let isRunning = false;
-    function loop(){
-    ctx.clearRect(0,0,W,H);
-
-    if(isRunning){
-    confs.forEach(c=>{c.update();c.draw()});
+    function rand(min, max) {
+      return Math.random() * (max - min) + min;
     }
-    requestAnimationFrame(loop);
+
+    class Confetti {
+      constructor() {
+        this.reset();
+      }
+
+      reset() {
+        this.x = rand(0, W);
+        this.y = rand(-H, 0);
+        this.size = rand(6, 12);
+        this.color = `hsl(${rand(0, 360)}, 100%, 70%)`;
+        this.tilt = rand(-10, 10);
+        this.speed = rand(1, 4);
+        this.opacity = rand(0.8, 1);
+        this.rotate = rand(0, 360);
+      }
+
+      update() {
+        this.y += this.speed;
+        this.x += Math.sin(this.y / 20) * 1.5;
+        this.rotate += 4;
+        if (this.y > H + 20) this.reset();
+      }
+
+      draw() {
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        ctx.rotate(this.rotate * Math.PI / 180);
+        ctx.fillStyle = this.color;
+        ctx.globalAlpha = this.opacity;
+        ctx.fillRect(-this.size / 2, -this.size / 2, this.size, this.size * 0.6);
+        ctx.restore();
+      }
+    }
+
+    const confs = Array.from({length: 120}, () => new Confetti());
+    let isRunning = false;
+
+    function loop() {
+      ctx.clearRect(0, 0, W, H);
+      if (isRunning) confs.forEach(c => { c.update(); c.draw(); });
+      requestAnimationFrame(loop);
     }
     loop();
 
-    function playMelody(){
-    const AudioCtx = window.AudioContext || window.webkitAudioContext;
-    const ac = new AudioCtx();
-    const now = ac.currentTime;
-    const notes = [523.25, 659.25, 783.99, 523.25, 659.25]; // C5, E5, G5, C5, E5
-    notes.forEach((freq,i)=>{
-    const o = ac.createOscillator();
-    const g = ac.createGain();
-    o.type = 'sine';o.frequency.value = freq;g.gain.value = 0.001;
-    o.connect(g);g.connect(ac.destination);
-    g.gain.setValueAtTime(0.001, now + i*0.18);
-    g.gain.exponentialRampToValueAtTime(0.12, now + i*0.18 + 0.02);
-    g.gain.exponentialRampToValueAtTime(0.0001, now + i*0.18 + 0.17);
-    o.start(now + i*0.18);o.stop(now + i*0.18 + 0.18);
-    });
-    // close ctx after melody
-    setTimeout(()=>{if(ac.close)ac.close()}, 1200);
+    function playMelody() {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      const ac = new AudioCtx();
+      const now = ac.currentTime;
+      const notes = [523.25, 659.25, 783.99, 523.25, 659.25]; // C5, E5, G5, C5, E5
+      notes.forEach((freq, i) => {
+        const o = ac.createOscillator();
+        const g = ac.createGain();
+        o.type = 'sine'; o.frequency.value = freq; g.gain.value = 0.001;
+        o.connect(g); g.connect(ac.destination);
+        g.gain.setValueAtTime(0.001, now + i * 0.18);
+        g.gain.exponentialRampToValueAtTime(0.12, now + i * 0.18 + 0.02);
+        g.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.18 + 0.17);
+        o.start(now + i * 0.18); o.stop(now + i * 0.18 + 0.18);
+      });
+      setTimeout(() => { if (ac.close) ac.close(); }, 1200);
     }
 
-
-    document.getElementById('celebrateBtn').addEventListener('click', ()=>{
-    isRunning = true;playMelody();
-    // stop after a while
-    setTimeout(()=>{isRunning=false}, 8000);
+    document.getElementById('celebrateBtn').addEventListener('click', () => {
+      isRunning = true;
+      playMelody();
+      setTimeout(() => { isRunning = false; }, 8000);
     });
 
-
-    // toggle hearts: make them bigger / more visible
+    // Hearts toggle
     const hearts = document.getElementById('hearts');
     let extraPink = false;
-    document.getElementById('toggleHearts').addEventListener('click', ()=>{
-    extraPink = !extraPink;
-    if(extraPink){
-    document.documentElement.style.setProperty('--pink-1','#fff0f7');
-    document.documentElement.style.setProperty('--pink-2','#ffd6ec');
-    document.documentElement.style.setProperty('--pink-3','#ff8fcf');
-    document.documentElement.style.setProperty('--pink-4','#ff3d99');
-    hearts.style.transform = 'scale(1.1)';
-    hearts.style.filter = 'drop-shadow(0 10px 20px rgba(255,77,148,0.18))';
-    } else {
-    document.documentElement.style.setProperty('--pink-1','#ffeff6');
-    document.documentElement.style.setProperty('--pink-2','#ffd3e8');
-    document.documentElement.style.setProperty('--pink-3','#ff9ccf');
-    document.documentElement.style.setProperty('--pink-4','#ff66b3');
-    hearts.style.transform = '';
-    hearts.style.filter = '';
-    }
+    document.getElementById('toggleHearts').addEventListener('click', () => {
+      extraPink = !extraPink;
+      if (extraPink) {
+        document.documentElement.style.setProperty('--pink-1', '#fff0f7');
+        document.documentElement.style.setProperty('--pink-2', '#ffd6ec');
+        document.documentElement.style.setProperty('--pink-3', '#ff8fcf');
+        document.documentElement.style.setProperty('--pink-4', '#ff3d99');
+        hearts.style.transform = 'scale(1.1)';
+        hearts.style.filter = 'drop-shadow(0 10px 20px rgba(255,77,148,0.18))';
+      } else {
+        document.documentElement.style.setProperty('--pink-1', '#ffeff6');
+        document.documentElement.style.setProperty('--pink-2', '#ffd3e8');
+        document.documentElement.style.setProperty('--pink-3', '#ff9ccf');
+        document.documentElement.style.setProperty('--pink-4', '#ff66b3');
+        hearts.style.transform = '';
+        hearts.style.filter = '';
+      }
     });
 
-
-    // small accessibility: focus style
-    document.querySelectorAll('button').forEach(b=>{
-    b.addEventListener('keydown', e=>{if(e.key==='Enter') b.click()});
+    // Keyboard accessibility
+    document.querySelectorAll('button').forEach(b => {
+      b.addEventListener('keydown', e => { if (e.key === 'Enter') b.click(); });
     });
   </script>
 
